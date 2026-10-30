@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Records</title>
+</head>
+<body>
+
+    <h2>Book Records</h2>
+
+    <label for="bookSelect">Select a book:</label>
+
+    <select id="bookSelect">
+        <option value="">-- Select a Book --</option>
+    </select>
+
+    <div id="bookDetails"></div>
+
+    <script>
+        const jsonURL = "https://raw.githubusercontent.com/tasnimnom-20/LAB06-JSON/refs/heads/main/books.json";
+
+        let books = [];
+
+        fetch(jsonURL)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to load JSON file");
+                }
+                return response.json();
+            })
+            .then(data => {
+                books = data.Books;
+
+                const select = document.getElementById("bookSelect");
+
+                books.forEach((book, index) => {
+                    const option = document.createElement("option");
+
+                    option.value = index;
+                    option.textContent = book.title;
+
+                    select.appendChild(option);
+                });
+            })
+            .catch(error => {
+                document.getElementById("bookDetails").textContent =
+                    "Error loading book data. Please check the JSON URL.";
+                console.error(error);
+            });
+
+        document.getElementById("bookSelect").addEventListener("change", function() {
+
+            const selectedIndex = this.value;
+            const details = document.getElementById("bookDetails");
+
+            if (selectedIndex === "") {
+                details.innerHTML = "";
+                return;
+            }
+
+            const book = books[selectedIndex];
+
+            details.innerHTML = `
+                <h3>${book.title}</h3>
+                <p><strong>Author:</strong> ${book.author}</p>
+                <p><strong>Publication Year:</strong> ${book.publicationYear}</p>
+                <p><strong>Genres:</strong> ${book.genres.join(", ")}</p>
+            `;
+        });
+    </script>
+
+</body>
+</html>
